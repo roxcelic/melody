@@ -23,7 +23,6 @@ app.get('/', async (req, res) => {
         }
     }));
 
-
     res.json({ 
         time: {
             progress_ms: currentlyPlaying.progress_ms || null,
@@ -35,9 +34,14 @@ app.get('/', async (req, res) => {
         track: {
             name: currentlyPlaying.item?.name || null,
             artists: currentlyPlaying.item?.artists || null,
-            album: currentlyPlaying.item?.album.name || null
+            album: currentlyPlaying.item?.album.name || null,
+            id: currentlyPlaying.item?.id
         },
         embeds: {
+            artists: currentlyPlaying.item.artists.map(artist => 
+                `https://open.spotify.com/embed/artist/${artist.id}`
+            ),
+            track: `https://open.spotify.com/embed/track/${currentlyPlaying.item?.id}`,
             album: `https://open.spotify.com/embed/album/${currentlyPlaying.item?.album.id || null}`,
             top_playlist: `https://open.spotify.com/embed/playlist/${Playlists[0]?.id || null}`
         }
