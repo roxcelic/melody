@@ -38,7 +38,7 @@ app.get('/', async (req, res) => {
             album: currentlyPlaying.item?.album.name || null
         },
         embeds: {
-            album: "https://open.spotify.com/embed/album/1tTDzjJit4c6TpIEmrytCx",
+            album: `https://open.spotify.com/embed/album/${currentlyPlaying.item?.album.id || null}`,
             top_playlist: `https://open.spotify.com/embed/playlist/${Playlists[0]?.id || null}`
         }
 
