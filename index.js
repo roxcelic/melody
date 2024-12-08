@@ -28,7 +28,9 @@ app.get('/', async (req, res) => {
         time: {
             progress_ms: currentlyPlaying.progress_ms || null,
             duration_ms: currentlyPlaying.item?.duration_ms || null,
-            percent: currentlyPlaying.progress_ms / currentlyPlaying.item?.duration_ms * 100 || null
+            percent: currentlyPlaying.progress_ms / currentlyPlaying.item?.duration_ms * 100 || null,
+            paused: !currentlyPlaying?.is_playing || false,
+            local: currentlyPlaying.item?.is_local || false
         },
         track: {
             name: currentlyPlaying.item?.name || null,
