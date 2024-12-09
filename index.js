@@ -1,6 +1,6 @@
 require('dotenv').config();
-const fs = require('fs');
 const express = require('express');
+const cors = require('cors');
 
 const { getstatus, getimage } = require('./utils/utils');
 const { getCurrentlyPlaying, getPlaylists } = require('./utils/spotify_utils');
