@@ -37,7 +37,8 @@ app.get('/', async (req, res) => {
             name: currentlyPlaying.item?.name || null,
             artists: currentlyPlaying.item?.artists || null,
             album: currentlyPlaying.item?.album.name || null,
-            id: currentlyPlaying.item?.id
+            id: currentlyPlaying.item?.id || null,
+            cover: currentlyPlaying.item?.album.images || null
         },
         embeds: {
             artists: currentlyPlaying.item?.artists.map(artist => 
