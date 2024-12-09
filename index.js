@@ -9,6 +9,8 @@ const { getUserInfo } = require('./utils/discord_utils');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors());
+
 app.get('/', async (req, res) => {
     const currentlyPlaying = await getCurrentlyPlaying();
     let Playlists = await getPlaylists();
@@ -41,7 +43,7 @@ app.get('/', async (req, res) => {
             artists: currentlyPlaying.item?.artists.map(artist => 
                 `https://open.spotify.com/embed/artist/${artist.id}`
             ),
-            track: `https://open.spotify.com/embed/track/${currentlyPlaying.item?.id}`,
+            track: `https://open.spotify.com/embed/track/${currentlyPlaying.item?.id || null}`,
             album: `https://open.spotify.com/embed/album/${currentlyPlaying.item?.album.id || null}`,
             top_playlist: `https://open.spotify.com/embed/playlist/${Playlists[0]?.id || null}`
         }
