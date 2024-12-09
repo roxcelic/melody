@@ -38,7 +38,7 @@ app.get('/', async (req, res) => {
             id: currentlyPlaying.item?.id
         },
         embeds: {
-            artists: currentlyPlaying.item.artists.map(artist => 
+            artists: currentlyPlaying.item?.artists.map(artist => 
                 `https://open.spotify.com/embed/artist/${artist.id}`
             ),
             track: `https://open.spotify.com/embed/track/${currentlyPlaying.item?.id}`,
