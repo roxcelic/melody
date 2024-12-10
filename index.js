@@ -1,6 +1,8 @@
 require('dotenv').config();
+const NodeCache = require( "node-cache" );
 const express = require('express');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 
 const { getstatus, getimage } = require('./utils/utils');
 const { getCurrentlyPlaying, getPlaylists } = require('./utils/spotify_utils');
@@ -8,14 +10,36 @@ const { getUserInfo } = require('./utils/discord_utils');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const myCache = new NodeCache();
+
+const limiter = rateLimit({
+	windowMs: 30 * 1000,
+	limit: 30,
+	standardHeaders: 'draft-7',
+	legacyHeaders: false,
+})
 
 app.use(cors());
 
-app.get('/', async (req, res) => {
-    const currentlyPlaying = await getCurrentlyPlaying();
-    let Playlists = await getPlaylists();
+app.use(limiter)
 
-    Playlists = Playlists.map(playlist => ({
+app.get('/', async (req, res) => {
+
+    let mainData = {
+        currentlyPlaying: {},
+        Playlists: {},
+    };
+
+    if (myCache.get( "spotify" )){
+        mainData = myCache.get( "spotify" );
+    } else {
+        mainData.currentlyPlaying = await getCurrentlyPlaying();
+        mainData.Playlists = await getPlaylists();
+    
+        myCache.set( "spotify", mainData, 10 );
+    }
+
+    mainData.Playlists = mainData.Playlists.map(playlist => ({
         id: playlist.id,
         name: playlist.name,
         link: playlist.external_urls.spotify,
@@ -25,35 +49,42 @@ app.get('/', async (req, res) => {
         }
     }));
 
-    res.json({ 
+    let orderedData = {
         time: {
-            progress_ms: currentlyPlaying.progress_ms || null,
-            duration_ms: currentlyPlaying.item?.duration_ms || null,
-            percent: currentlyPlaying.progress_ms / currentlyPlaying.item?.duration_ms * 100 || null,
-            paused: !currentlyPlaying?.is_playing || false,
-            local: currentlyPlaying.item?.is_local || false
+            progress_ms: mainData.currentlyPlaying.progress_ms || null,
+            duration_ms: mainData.currentlyPlaying.item?.duration_ms || null,
+            percent: mainData.currentlyPlaying.progress_ms / mainData.currentlyPlaying.item?.duration_ms * 100 || null,
+            paused: !mainData.currentlyPlaying?.is_playing || false,
+            local: mainData.currentlyPlaying.item?.is_local || false
         },
         track: {
-            name: currentlyPlaying.item?.name || null,
-            artists: currentlyPlaying.item?.artists || null,
-            album: currentlyPlaying.item?.album.name || null,
-            id: currentlyPlaying.item?.id || null,
-            cover: currentlyPlaying.item?.album.images || null
+            name: mainData.currentlyPlaying.item?.name || null,
+            artists: mainData.currentlyPlaying.item?.artists || null,
+            album: mainData.currentlyPlaying.item?.album.name || null,
+            id: mainData.currentlyPlaying.item?.id || null,
+            cover: mainData.currentlyPlaying.item?.album.images || null
         },
         embeds: {
-            artists: currentlyPlaying.item?.artists.map(artist => 
+            artists: mainData.currentlyPlaying.item?.artists.map(artist => 
                 `https://open.spotify.com/embed/artist/${artist.id}`
             ),
-            track: `https://open.spotify.com/embed/track/${currentlyPlaying.item?.id || null}`,
-            album: `https://open.spotify.com/embed/album/${currentlyPlaying.item?.album.id || null}`,
-            top_playlist: `https://open.spotify.com/embed/playlist/${Playlists[0]?.id || null}`
+            track: `https://open.spotify.com/embed/track/${mainData.currentlyPlaying.item?.id || null}`,
+            album: `https://open.spotify.com/embed/album/${mainData.currentlyPlaying.item?.album.id || null}`,
+            top_playlist: `https://open.spotify.com/embed/playlist/${mainData.Playlists[0]?.id || null}`
         }
+    }
 
-    });
+    res.json(orderedData);
 });
 
 app.get('/discord', async (req, res) => {
-    const userInfo = await getUserInfo();
+    let userInfo = myCache.get( "discord" );
+
+    if (userInfo == undefined){
+        userInfo = await getUserInfo();
+    
+        myCache.set( "discord", userInfo, 10 );
+    }
     res.json({ userInfo });
 });
 
