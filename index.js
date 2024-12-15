@@ -117,8 +117,12 @@ app.get('/github', async (req, res) => {
     let userInfo = myCache.get( "github" );
 
     if (userInfo == undefined){
-        userInfo = await fetch(`https://api.github.com/users/roxcelic`);
-        userInfo = await userInfo.json();
+        try {
+            userInfo = await fetch(`https://api.github.com/users/roxcelic`);
+            userInfo = await userInfo.json();
+        } catch (e){
+            userInfo = "error";
+        }
     
         myCache.set( "github", userInfo, 60 );
     }
