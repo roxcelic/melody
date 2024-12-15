@@ -30,7 +30,7 @@ async function fetchUserPosts(handle) {
         const nonReplyPost = postsResponse.data.feed.find(post => !post.reply);
 
         if (nonReplyPost) {
-            return nonReplyPost;
+            return parseBskyData(nonReplyPost, profileResponse.data);
         } else {
             return null;
         }
@@ -40,25 +40,25 @@ async function fetchUserPosts(handle) {
     }
 }
 
-async function parseBskyData(data) {
+async function parseBskyData(postData, profileData) {
     const contents = {
         post: {
-            text: data.post.record.text,
-            embeds: data.post.embed.images.map(img => ({
+            text: postData.post.record.text,
+            embeds: postData.post.embed.images.map(img => ({
                 "alt": img?.alt || null,
                 "url": img?.thumb || null
             }))
         },
         profile: {
-            handle: data.post.author.handle,
-            displayName: data.post.author.displayName,
-            avatar: data.post.author.avatar,
+            handle: postData.post.author.handle,
+            displayName: postData.post.author.displayName,
+            avatar: postData.post.author.avatar,
+            banner: profileData.banner,
+            description: profileData.description
         }
     };
 
     return contents;
 }
 
-
-
-module.exports = { fetchUserPosts, parseBskyData };
+module.exports = { fetchUserPosts };

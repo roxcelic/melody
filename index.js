@@ -7,7 +7,7 @@ const rateLimit = require('express-rate-limit');
 const { getstatus, getimage } = require('./utils/utils');
 const { getCurrentlyPlaying, getPlaylists } = require('./utils/spotify_utils');
 const { getUserInfo } = require('./utils/discord_utils');
-const { fetchUserPosts, parseBskyData } = require('./utils/bluesky_utils');
+const { fetchUserPosts } = require('./utils/bluesky_utils');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -105,7 +105,6 @@ app.get('/bsky', async (req, res) => {
 
     if (userInfo == undefined){
         userInfo = await fetchUserPosts('roxcelic.love');
-        userInfo = await parseBskyData(userInfo);
     
         myCache.set( "bsky", userInfo, 25 );
     }
