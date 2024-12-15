@@ -23,6 +23,7 @@ const limiter = rateLimit({
 app.use(cors());
 
 app.use(limiter);
+app.set('trust proxy', 1);
 
 app.get('/', async (req, res) => {
 
