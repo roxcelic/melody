@@ -38,7 +38,7 @@ app.get('/', async (req, res) => {
         mainData.currentlyPlaying = await getCurrentlyPlaying();
         mainData.Playlists = await getPlaylists();
     
-        myCache.set( "spotify", mainData, 10 );
+        myCache.set( "spotify", mainData, 15 );
     }
 
     mainData.Playlists = mainData.Playlists.map(playlist => ({
@@ -57,7 +57,8 @@ app.get('/', async (req, res) => {
             duration_ms: mainData.currentlyPlaying.item?.duration_ms || null,
             percent: mainData.currentlyPlaying.progress_ms / mainData.currentlyPlaying.item?.duration_ms * 100 || null,
             paused: !mainData.currentlyPlaying?.is_playing || false,
-            local: mainData.currentlyPlaying.item?.is_local || false
+            local: mainData.currentlyPlaying.item?.is_local || false,
+            cached_time: Date.now()
         },
         track: {
             name: mainData.currentlyPlaying.item?.name || null,
@@ -85,7 +86,7 @@ app.get('/discord', async (req, res) => {
     if (userInfo == undefined){
         userInfo = await getUserInfo();
     
-        myCache.set( "discord", userInfo, 30 );
+        myCache.set( "discord", userInfo, 1800 );
     }
     res.json({ userInfo });
 });
@@ -106,7 +107,20 @@ app.get('/bsky', async (req, res) => {
     if (userInfo == undefined){
         userInfo = await fetchUserPosts('roxcelic.love');
     
-        myCache.set( "bsky", userInfo, 25 );
+        myCache.set( "bsky", userInfo, 3600 );
+    }
+
+    res.json(userInfo);
+})
+
+app.get('/github', async (req, res) => {
+    let userInfo = myCache.get( "github" );
+
+    if (userInfo == undefined){
+        userInfo = await fetch(`https://api.github.com/users/${username}`);
+        userInfo = await userInfo.json();
+    
+        myCache.set( "github", userInfo, 60 );
     }
 
     res.json(userInfo);
