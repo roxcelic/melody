@@ -7,17 +7,18 @@ const rateLimit = require('express-rate-limit');
 const { getstatus, getimage } = require('./utils/utils');
 const { getCurrentlyPlaying, getPlaylists } = require('./utils/spotify_utils');
 const { getUserInfo } = require('./utils/discord_utils');
+const { fetchUserPosts, parseBskyData } = require('./utils/bluesky_utils');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const myCache = new NodeCache();
 
 const limiter = rateLimit({
-	windowMs: 30 * 1000,
-	limit: 30,
-	standardHeaders: 'draft-7',
-	legacyHeaders: false,
-})
+    windowMs: 30 * 1000,
+    max: 30,
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
 app.use(cors());
 
@@ -83,7 +84,7 @@ app.get('/discord', async (req, res) => {
     if (userInfo == undefined){
         userInfo = await getUserInfo();
     
-        myCache.set( "discord", userInfo, 10 );
+        myCache.set( "discord", userInfo, 30 );
     }
     res.json({ userInfo });
 });
@@ -97,6 +98,19 @@ app.get('/image', async (req, res) => {
     const image = await getimage();
     res.json({ image });
 });
+
+app.get('/bsky', async (req, res) => {
+    let userInfo = myCache.get( "bsky" );
+
+    if (userInfo == undefined){
+        userInfo = await fetchUserPosts('roxcelic.love');
+        userInfo = await parseBskyData(userInfo);
+    
+        myCache.set( "bsky", userInfo, 25 );
+    }
+
+    res.json(userInfo);
+})
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
