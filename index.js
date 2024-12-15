@@ -30,12 +30,14 @@ app.get('/', async (req, res) => {
     let mainData = {
         currentlyPlaying: {},
         Playlists: {},
+        random: "",
     };
 
     if (myCache.get( "spotify" )){
         mainData = myCache.get( "spotify" );
     } else {
         mainData.currentlyPlaying = await getCurrentlyPlaying();
+        mainData.random = Date.now();
         mainData.Playlists = await getPlaylists();
     
         myCache.set( "spotify", mainData, 15 );
@@ -58,7 +60,7 @@ app.get('/', async (req, res) => {
             percent: mainData.currentlyPlaying.progress_ms / mainData.currentlyPlaying.item?.duration_ms * 100 || null,
             paused: !mainData.currentlyPlaying?.is_playing || false,
             local: mainData.currentlyPlaying.item?.is_local || false,
-            cached_time: Date.now()
+            cached_time: mainData.random
         },
         track: {
             name: mainData.currentlyPlaying.item?.name || null,
