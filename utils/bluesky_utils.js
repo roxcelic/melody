@@ -52,7 +52,7 @@ async function parseBskyData(data) {
         profile: {
             handle: data.post.author.handle,
             displayName: data.post.author.displayName,
-            avatar: data.post.author.avatarc,
+            avatar: data.post.author.avatar,
         }
     };
 

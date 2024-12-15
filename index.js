@@ -22,7 +22,7 @@ const limiter = rateLimit({
 
 app.use(cors());
 
-app.use(limiter)
+app.use(limiter);
 
 app.get('/', async (req, res) => {
 
