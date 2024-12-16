@@ -37,7 +37,7 @@ app.get('/', async (req, res) => {
         mainData = myCache.get( "spotify" );
     } else {
         mainData.currentlyPlaying = await getCurrentlyPlaying();
-        mainData.random = Date.now();
+        mainData.random = new Date().getTime();
         mainData.Playlists = await getPlaylists();
     
         myCache.set( "spotify", mainData, 15 );
