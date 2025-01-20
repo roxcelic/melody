@@ -49,8 +49,9 @@ const refreshAccessToken = async () => {
 
         return newAccessToken;
     } catch (error) {
-        console.error('Error refreshing access token:', error.response ? error.response.data : error.message);
-        throw new Error('Failed to refresh access token');
+        console.log('Error refreshing access token:', error.response ? error.response.data : error.message);
+        
+        return null;
     }
 };
 
@@ -69,7 +70,8 @@ const getUserInfo = async () => {
         if (error.response && error.response.status === 401) {
             console.log('Access token expired. Refreshing token...');
             const newAccessToken = await refreshAccessToken();
-            return await getUserInfo(newAccessToken);
+            if (newAccessToken != null) return await getUserInfo(newAccessToken);
+            else return null;
         } else {
             throw new Error('Error fetching user info:', error.message);
         }
