@@ -45,7 +45,7 @@ async function parseBskyData(postData, profileData) {
     const contents = {
         post: {
             text: postData.post.record.text,
-            embeds: postData.post.embed.images.map(img => ({
+            embeds: postData.post.embed?.images.map(img => ({
                 "alt": img?.alt || null,
                 "url": img?.thumb || null
             }))
