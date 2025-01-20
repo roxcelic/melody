@@ -9,8 +9,8 @@ To have this work for yourself fill out the following things
 SPOTIFY_CLIENT_ID=
 SPOTIFY_CLIENT_SECRET=
 
-DISCORD_CLIENT_ID=
-DISCORD_CLIENT_SECRET=
+DISCORD_TOKEN=
+DISCORD_ID=
 
 BLUESKY_USERNAME=
 BLUESKY_PASSWORD=
@@ -20,10 +20,6 @@ BLUESKY_PASSWORD=
 // ./res.json
 {
   "spotify": {
-    "access_token": "",
-    "refresh_token": ""
-  },
-  "discord": {
     "access_token": "",
     "refresh_token": ""
   }
