@@ -43,7 +43,7 @@ app.get('/', async (req, res) => {
         myCache.set( "spotify", mainData, 15 );
     }
 
-    mainData.Playlists = mainData.Playlists.map(playlist => ({
+    if (mainData.Playlists != null)mainData.Playlists = mainData.Playlists.map(playlist => ({
         id: playlist.id,
         name: playlist.name,
         link: playlist.external_urls.spotify,
@@ -75,7 +75,9 @@ app.get('/', async (req, res) => {
             ),
             track: `https://open.spotify.com/embed/track/${mainData.currentlyPlaying.item?.id || null}`,
             album: `https://open.spotify.com/embed/album/${mainData.currentlyPlaying.item?.album.id || null}`,
-            top_playlist: `https://open.spotify.com/embed/playlist/${mainData.Playlists[0]?.id || null}`
+            top_playlist: mainData?.Playlists 
+                ? `https://open.spotify.com/embed/playlist/${mainData.Playlists[0]?.id}` 
+                : null
         }
     }
 

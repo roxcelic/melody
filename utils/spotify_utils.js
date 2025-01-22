@@ -37,33 +37,37 @@ async function getPlaylists() {
     let ACCESS_TOKEN = getSpotifyTokens().access_token;
     const url = 'https://api.spotify.com/v1/me/playlists';
 
-    let response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${ACCESS_TOKEN}`,
-            'Content-Type': 'application/json'
+    try {
+        let response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${ACCESS_TOKEN}`,
+                'Content-Type': 'application/json'
+            }
+        });
+    
+        if (response.status === 401) {
+            ACCESS_TOKEN = await refreshSpotifyAccessToken();
+            if (ACCESS_TOKEN) {
+                response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${ACCESS_TOKEN}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+            }
         }
-    });
-
-    if (response.status === 401) {
-        ACCESS_TOKEN = await refreshSpotifyAccessToken();
-        if (ACCESS_TOKEN) {
-            response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${ACCESS_TOKEN}`,
-                    'Content-Type': 'application/json',
-                },
-            });
+    
+        if (!response.ok) {
+            return [];
         }
+    
+        const data = await response.json();
+        return data.items;
+    } catch (e) {
+        return null;
     }
-
-    if (!response.ok) {
-        return [];
-    }
-
-    const data = await response.json();
-    return data.items;
 }
 
 // returns my access token and refresh token
