@@ -1,0 +1,21 @@
+// variables
+let dataPath = './house/'
+
+// imports
+const { makefolder } = require(`${dataPath}test`);
+const { readDataFile, writeDataFile, deleteDataFile, getPaths } = require(`${dataPath}files`);
+const { fetchUserPosts } = require(`${dataPath}bsky`);
+const { getUserInfo } = require(`${dataPath}discord`);
+const { getPlaylists } = require(`${dataPath}spotify`);
+const { getCurrentlyPlaying } = require(`${dataPath}spotify`);
+const { myLogger } = require(`${dataPath}log`);
+
+// export functions
+module.exports = {
+    makefolder,
+    readDataFile, writeDataFile, deleteDataFile, getPaths,
+    fetchUserPosts,
+    getUserInfo,
+    getCurrentlyPlaying, getPlaylists,
+    myLogger
+}
