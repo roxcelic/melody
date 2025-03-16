@@ -15,8 +15,6 @@ async function getCurrentlyPlaying() {
         });
         let data = await response.json();
 
-        console.log(data);
-
         if (data?.error && data.error.status == 401){
             if (await refreshToken()) {
                 tokens = await getSpotifyTokens();
@@ -35,8 +33,6 @@ async function getCurrentlyPlaying() {
 
         return data;
     } catch (e) {
-        console.log(e);
-
         return null;
     }
 }
