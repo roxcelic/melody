@@ -18,7 +18,7 @@ async function readDataFile(name, extention = ".json"){
     let dataFilePath = path.join(__dirname, `../../data/${name}${extention}`); 
 
     if (!fs.existsSync(dataFilePath)) {
-        return null;
+        return "empty";
     }
 
     const data = fs.readFileSync(dataFilePath, 'utf8');
