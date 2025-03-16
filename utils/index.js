@@ -6,8 +6,7 @@ const { makefolder } = require(`${dataPath}test`);
 const { readDataFile, writeDataFile, deleteDataFile, getPaths } = require(`${dataPath}files`);
 const { fetchUserPosts } = require(`${dataPath}bsky`);
 const { getUserInfo } = require(`${dataPath}discord`);
-const { getPlaylists } = require(`${dataPath}spotify`);
-const { getCurrentlyPlaying } = require(`${dataPath}spotify`);
+const { getCurrentlyPlaying, parseSpotifyData } = require(`${dataPath}spotify`);
 const { myLogger } = require(`${dataPath}log`);
 
 // export functions
@@ -16,6 +15,6 @@ module.exports = {
     readDataFile, writeDataFile, deleteDataFile, getPaths,
     fetchUserPosts,
     getUserInfo,
-    getCurrentlyPlaying, getPlaylists,
+    getCurrentlyPlaying, parseSpotifyData,
     myLogger
 }

@@ -9,8 +9,15 @@ router.get('/spotify', async (req, res) => {
 
     if (myCache.get( "spotify" )){
         mainData = myCache.get( "spotify" );
+
+        let currentTime = (new Date()).getTime();
+
+        mainData.time.progress_ms = mainData.time.progress_ms + (currentTime - mainData.time.timeStamp);
+        mainData.time.timeStamp = currentTime;
     } else {
-        mainData = await utils.getCurrentlyPlaying();
+        let spotifyData = await utils.getCurrentlyPlaying();
+
+        mainData = await utils.parseSpotifyData(spotifyData);
     
         myCache.set( "spotify", mainData, 15);
     }

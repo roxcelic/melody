@@ -2,10 +2,11 @@ const fs = require('fs');
 const path = require('path');
 
 // to write to a file
-async function writeDataFile(name, content){
-    let dataFilePath = path.join(__dirname, `../../data/${name}.json`); 
+async function writeDataFile(name, content, extention = ".json", format = true){
+    let dataFilePath = path.join(__dirname, `../../data/${name}${extention}`); 
 
-    let modified_content = JSON.stringify(content);
+    let modified_content = content;
+    if (format) modified_content = JSON.stringify(content);
 
     fs.writeFileSync(dataFilePath, modified_content);
 
@@ -13,20 +14,28 @@ async function writeDataFile(name, content){
 }
 
 // to read a file
-async function readDataFile(name){
-    let dataFilePath = path.join(__dirname, `../../data/${name}.json`); 
+async function readDataFile(name, extention = ".json"){
+    let dataFilePath = path.join(__dirname, `../../data/${name}${extention}`); 
 
     if (!fs.existsSync(dataFilePath)) {
         return null;
     }
 
     const data = fs.readFileSync(dataFilePath, 'utf8');
-    return JSON.parse(data);
+    let message;
+
+    try {
+        message = JSON.parse(data);
+    } catch (e) {
+        message = data;
+    }
+    
+    return message;
 }
 
 // delete data file
-async function deleteDataFile(name) {
-    let dataFilePath = path.join(__dirname, `../../data/${name}`); 
+async function deleteDataFile(name, extention = ".json") {
+    let dataFilePath = path.join(__dirname, `../../data/${name}${extention}`); 
 
     fs.unlink(dataFilePath, (err => {
         if (err) console.log(err);

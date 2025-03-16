@@ -23,10 +23,13 @@ router.post('/admin/changeStatus', utils.myLogger, async (req, res) => {
     let status = "succesfull";
 
     try {
-        let text = req.body;
+        let {text} = req.body;
         let currentData = await utils.readDataFile("status") || {};
     
         currentData.status = text.message;
+        currentData.image = text.image;
+
+        console.log(currentData)
         utils.writeDataFile("status", currentData);
     } catch (e) {
         status = "failed";
@@ -38,18 +41,9 @@ router.post('/admin/changeStatus', utils.myLogger, async (req, res) => {
 });
 
 // upload status image
-router.post('/admin/statusImage', utils.myLogger, upload.single('file'), async (req, res) => {
+router.post('/admin/upload', utils.myLogger, upload.single('image'), async (req, res) => {
     let status = "succesfull";
     
-    try {
-        let currentData = await utils.readDataFile("status") || {};
-        currentData.image = `/media/${req.file.filename}`;
-    
-        utils.writeDataFile("status", currentData);
-    } catch (e) {
-        status = "failed";
-    }
-
     res.json({
         status
     });
