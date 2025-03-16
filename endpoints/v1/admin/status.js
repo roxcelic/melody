@@ -30,7 +30,6 @@ router.post('/admin/changeStatus', utils.myLogger, async (req, res) => {
         currentData.status = text.message;
         currentData.image = text.image;
 
-        console.log(currentData)
         utils.writeDataFile("status", currentData);
     } catch (e) {
         status = "failed";
