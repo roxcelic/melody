@@ -36,6 +36,7 @@ app.use(express.json());
 app.set('trust proxy', 1);
 
 // frontends
+app.get('/', (req, res) => {res.redirect('/frontends');});
 app.use('/frontends', utils.myLogger, express.static('./frontends'));
 
 // uploads
