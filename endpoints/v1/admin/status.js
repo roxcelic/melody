@@ -24,7 +24,8 @@ router.post('/admin/changeStatus', utils.myLogger, async (req, res) => {
 
     try {
         let {text} = req.body;
-        let currentData = await utils.readDataFile("status") || {};
+        let currentData = await utils.readDataFile("status");
+        if (currentData == "empty") currentData = {};
     
         currentData.status = text.message;
         currentData.image = text.image;
