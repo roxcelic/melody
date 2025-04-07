@@ -3,13 +3,22 @@ let dataPath = './'
 
 // imports
 const { readDataFile, writeDataFile, deleteDataFile } = require(`${dataPath}files`);
+const rateLimit = require('express-rate-limit');    
+
+const limiter = rateLimit({
+    windowMs: 30 * 1000,
+    max: 30,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: "why"
+});
 
 const myLogger = async function (req, res, next) {
     let currentData = await readDataFile("data") || {ips: []};
 
     // ip grabber
     let clientIP = req.headers["x-forwarded-for"] || req.ip;
-    clientIP = clientIP.startsWith("::ffff:") ? clientIP.substring(7) : clientIP
+    clientIP = clientIP.startsWith("::ffff:") ? clientIP.substring(7) : clientIP;
 
     data = {
         ip: clientIP,
@@ -33,4 +42,19 @@ const myLogger = async function (req, res, next) {
     writeDataFile("data",currentData);
 }
 
-module.exports = {myLogger}
+const rateIp = async function (req, res, next) {
+    // ip grabber, i would never re-use code
+    let clientIP = req.headers["x-forwarded-for"] || req.ip;
+    clientIP = clientIP.startsWith("::ffff:") ? clientIP.substring(7) : clientIP;
+
+    let splitIP = clientIP.split(".");
+
+    // ip check, again id never re-use code
+    if (splitIP[0] == 100 || splitIP[0] == 127 ){
+        return next();
+    } else {
+        return limiter(req, res, next);
+    }
+}
+
+module.exports = {myLogger, rateIp}

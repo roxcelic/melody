@@ -7,7 +7,7 @@ const { readDataFile, writeDataFile, deleteDataFile, getPaths } = require(`${dat
 const { fetchUserPosts } = require(`${dataPath}bsky`);
 const { getUserInfo } = require(`${dataPath}discord`);
 const { getCurrentlyPlaying, parseSpotifyData } = require(`${dataPath}spotify`);
-const { myLogger } = require(`${dataPath}log`);
+const { myLogger, rateIp } = require(`${dataPath}log`);
 
 // export functions
 module.exports = {
@@ -16,5 +16,5 @@ module.exports = {
     fetchUserPosts,
     getUserInfo,
     getCurrentlyPlaying, parseSpotifyData,
-    myLogger
+    myLogger, rateIp
 }
