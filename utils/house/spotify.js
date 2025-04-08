@@ -82,7 +82,8 @@ const parseSpotifyData = async (data) => {
         time: {
             timeStamp: (new Date()).getTime(),
             progress_ms: data?.progress_ms || null,
-            duration: data?.item.duration_ms || null
+            duration: data?.item.duration_ms || null,
+            is_playing: data?.is_playing || false
         },
         album: {
             url: data?.item.album.external_urls.spotify || null,
