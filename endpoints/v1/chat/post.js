@@ -2,7 +2,7 @@ const express = require('express');
 const utils = require('../../../utils');
 const router = express.Router();
 
-router.post('/chat/post', utils.myLogger, async (req, res) => {
+router.post('/chat/post', async (req, res) => {
     let {text} = req.body;
 
     let chat = utils.readDataFile("chat") || [];
