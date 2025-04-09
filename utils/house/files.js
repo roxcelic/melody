@@ -13,6 +13,10 @@ async function writeDataFile(name, content, extention = ".json", format = true){
     return true;
 }
 
+function getDataPath() {
+    return path.join(__dirname, `../../data/`);
+}
+
 // to read a file
 async function readDataFile(name, extention = ".json"){
     let dataFilePath = path.join(__dirname, `../../data/${name}${extention}`); 
@@ -64,4 +68,4 @@ async function getPaths(method = 0) {
     }
 }
 
-module.exports = { writeDataFile, readDataFile, deleteDataFile, getPaths };
+module.exports = { writeDataFile, readDataFile, deleteDataFile, getPaths, getDataPath };

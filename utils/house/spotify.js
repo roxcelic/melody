@@ -59,7 +59,7 @@ async function refreshToken() {
     
         const body = await fetch(url, payload);
         const response = await body.json();
-        
+
         tokens.spotify.access_token = response.access_token;
         if (response.refresh_token){
             tokens.spotify.refresh_token = response.refresh_token; 
@@ -78,6 +78,8 @@ const getSpotifyTokens = async () => {
 };
 
 const parseSpotifyData = async (data) => {
+    if (!data?.item && data?.item == undefined) return null;
+
     let parsedData = {
         time: {
             timeStamp: (new Date()).getTime(),

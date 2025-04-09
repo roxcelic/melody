@@ -36,7 +36,6 @@ async function fetchUserPosts(handle) {
         }
 
     } catch (error) {
-        console.log(error.code);
         return "error";
     }
 }

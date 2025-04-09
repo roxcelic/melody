@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
+        cb(null, `${file.originalname.slice(0, file.originalname.length - path.extname(file.originalname).length)}-${uniqueSuffix}${path.extname(file.originalname)}`);
     }
 });
 
@@ -43,7 +43,7 @@ router.post('/admin/changeStatus', utils.myLogger, async (req, res) => {
 // upload status image
 router.post('/admin/upload', utils.myLogger, upload.single('image'), async (req, res) => {
     let status = "succesfull";
-    
+
     res.json({
         status
     });

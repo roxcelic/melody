@@ -7,7 +7,6 @@ router.post('/admin/deleteUpload', utils.myLogger, async (req, res) => {
     let status = "succesfull";
 
     try {
-        console.log(text.fileName)
         utils.deleteDataFile(`/uploads/${text.fileName}`, "");
     } catch (e) {
         status = 'failed';
