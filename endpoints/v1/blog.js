@@ -10,7 +10,6 @@ router.get('/blog', async (req, res) => {
     };
 
     if (method == 1) {
-        console.log(currentData);
         currentData.message = marked.parse(currentData.message);
     }
 
