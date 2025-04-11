@@ -29,7 +29,9 @@ const myLogger = async function (req, res, next) {
 
     let splitIP = clientIP.split(".");
 
-    if (splitIP[0] == 100 || splitIP[0] == 127 ){
+    let trustedIps = process.env.TRUSTED_IPS.split(",");
+
+    if (splitIP[0] == 100 || splitIP[0] == 127  || trustedIps.includes(clientIP)){
         data.succefull = true;
         next();
     } else {
