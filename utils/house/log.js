@@ -51,8 +51,10 @@ const rateIp = async function (req, res, next) {
 
     let splitIP = clientIP.split(".");
 
+    let trustedIps = process.env.TRUSTED_IPS.split(",");
+
     // ip check, again id never re-use code
-    if (splitIP[0] == 100 || splitIP[0] == 127 ){
+    if (splitIP[0] == 100 || splitIP[0] == 127  || trustedIps.includes(clientIP)){
         return next();
     } else {
         return limiter(req, res, next);
