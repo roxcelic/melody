@@ -16,7 +16,7 @@ if (!fs.existsSync("data")) fs.mkdirSync("data");
 const app = express();
 
 // middleware
-// app.use(cors());
+app.use(cors());
 app.use(utils.rateIp);
 app.use(express.json()); 
 app.set('trust proxy', 1);
