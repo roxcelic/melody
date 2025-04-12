@@ -10,7 +10,7 @@ router.post('/chat/post', async (req, res) => {
 
     chat.push([text.upload || "", text.color || "#fff"]);
 
-    if (chat.length > 99) chat.length = 99;
+    while (chat.length > 99) chat.shift();
     utils.writeDataFile("chat", chat);
 
     res.json({"status": "succesfull"});
