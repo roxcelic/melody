@@ -18,10 +18,15 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.get('/wallpaper', (req, res) => {
+
     const imagePath = `${utils.getDataPath()}wallpaper`;
-    
-    res.setHeader('Content-Type', 'image/png');
-    res.sendFile(imagePath);
+    if (fs.existsSync(imagePath)){
+        res.setHeader('Content-Type', 'image/png');
+        res.sendFile(imagePath);
+    } else {
+        res.send(null);
+    }
+
 });
   
 
