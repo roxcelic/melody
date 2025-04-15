@@ -5,9 +5,13 @@ let dataPath = './'
 const { readDataFile, writeDataFile, deleteDataFile } = require(`${dataPath}files`);
 const rateLimit = require('express-rate-limit');    
 
+
+let max = parseInt(process.env.RATELIMIT || 30);
+console.log(max);
+
 const limiter = rateLimit({
     windowMs: 30 * 1000,
-    max: 30,
+    max: max,
     standardHeaders: true,
     legacyHeaders: false,
     message: "why"
