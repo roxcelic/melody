@@ -8,6 +8,7 @@ const { fetchUserPosts } = require(`${dataPath}bsky`);
 const { getUserInfo } = require(`${dataPath}discord`);
 const { getCurrentlyPlaying, parseSpotifyData } = require(`${dataPath}spotify`);
 const { myLogger, rateIp } = require(`${dataPath}log`);
+const { newChatId } = require(`${dataPath}chat`);
 
 // export functions
 module.exports = {
@@ -16,5 +17,6 @@ module.exports = {
     fetchUserPosts,
     getUserInfo,
     getCurrentlyPlaying, parseSpotifyData,
-    myLogger, rateIp
+    myLogger, rateIp,
+    newChatId
 }
