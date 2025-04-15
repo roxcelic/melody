@@ -6,8 +6,6 @@ router.post('/chat/post', async (req, res) => {
     let text = req.body;
 
     let chat = await utils.readDataFile("chat");
-    let id = await utils.newChatId();
-    console.log(id);
     
     chat = chat == "empty" ? [] : chat;
 
