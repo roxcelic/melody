@@ -9,7 +9,7 @@ router.post('/chat/post', async (req, res) => {
     if (req.body.chatName) {
         let folder = await utils.makefolder(`chat`);
 
-        if (fs.existsSync(`${folder}/${req.body.chatName}`) || await utils.IsAdmin(req, res)){
+        if (fs.existsSync(`${folder}/${req.body.chatName}.json`) || await utils.IsAdmin(req, res)){
 
             if (req.body.chatName == "admin" && !(await utils.IsAdmin(req, res))){
                 res.json({"status": "evil do-er"});
