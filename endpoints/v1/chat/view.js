@@ -6,9 +6,6 @@ const fs = require('fs');
 router.get('/chat/view', async (req, res) => {
     let chat = await utils.readDataFile("chat");
 
-    console.log(`is chat admin: ${req.query.chatName == "admin"}`);
-    console.log(`is user admin: ${await utils.IsAdmin(req, res)}`);
-
     if (req.query.chatName == "admin" && !(await utils.IsAdmin(req, res))){
         res.json({"status": "evil do-er"});
     } else {

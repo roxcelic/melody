@@ -9,9 +9,9 @@ router.post('/chat/post', async (req, res) => {
     if (req.body.chatName) {
         let folder = await utils.makefolder(`chat`);
 
-        if (fs.existsSync(`${folder}/${req.body.chatName}`) || utils.IsAdmin(req, res)){
+        if (fs.existsSync(`${folder}/${req.body.chatName}`) || await utils.IsAdmin(req, res)){
 
-            if (req.body.chatName == "admin" && !utils.IsAdmin(req, res)){
+            if (req.body.chatName == "admin" && !(await utils.IsAdmin(req, res))){
                 res.json({"status": "evil do-er"});
             } else {
                 let chat = await utils.readDataFile(`chat/${req.body.chatName}`);
