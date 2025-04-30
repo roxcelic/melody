@@ -32,25 +32,23 @@ router.post('/chat/post', async (req, res) => {
                 res.json({"status": "succesfull"});
             }
         } else {
-            res.json({"status": "evil do-er"});
+            let chat = await utils.readDataFile("chat");
+
+            chat = chat == "empty" ? [] : chat;
+        
+            chat.push([
+                text.upload || "", 
+                text.color || "#fff", 
+                await utils.newChatId(), 
+                text.name || "", 
+                new Date()
+            ]);
+        
+            while (chat.length > 99) chat.shift();
+            utils.writeDataFile("chat", chat);
+        
+            res.json({"status": "succesfull"});
         }
-
-        let chat = await utils.readDataFile("chat");
-
-        chat = chat == "empty" ? [] : chat;
-    
-        chat.push([
-            text.upload || "", 
-            text.color || "#fff", 
-            await utils.newChatId(), 
-            text.name || "", 
-            new Date()
-        ]);
-    
-        while (chat.length > 99) chat.shift();
-        utils.writeDataFile("chat", chat);
-    
-        res.json({"status": "succesfull"});
     } else {
         let chat = await utils.readDataFile("chat");
 
