@@ -110,6 +110,7 @@ const IsAdmin = async function (req, res) {
     console.log(`100 ${splitIP[0] == 100}`);
     console.log(`127 ${splitIP[0] == 127}`);
     console.log(`list ${ips.includes(clientIP)}`);
+    
     return (splitIP[0] == 100 || splitIP[0] == 127  || ips.includes(clientIP))
 }
 
