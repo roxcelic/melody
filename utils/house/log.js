@@ -65,4 +65,17 @@ const rateIp = async function (req, res, next) {
     }
 }
 
-module.exports = {myLogger, rateIp}
+const IsAdmin = async function (req, res) {
+    // ip grabber, i would never re-use code squared
+    let clientIP = req.headers["x-forwarded-for"] || req.ip;
+    clientIP = clientIP.startsWith("::ffff:") ? clientIP.substring(7) : clientIP;
+
+    let splitIP = clientIP.split(".");
+
+    let trustedIps = process.env.TRUSTED_IPS.split(",");
+
+    // ip check, again id never re-use code
+    return (splitIP[0] == 100 || splitIP[0] == 127  || trustedIps.includes(clientIP))
+}
+
+module.exports = {myLogger, rateIp, IsAdmin}

@@ -20,8 +20,8 @@ async function readDataFile(name, extention = ".json"){
     return message;
 }
 
-async function newChatId(){
-    let chat = await readDataFile("chat");
+async function newChatId(file = "chat"){
+    let chat = await readDataFile(file);
     let finalMessage = chat[0] != undefined ? chat[chat.length - 1] : [];
 
     return finalMessage[2] != undefined ? finalMessage[2] + 1 : 0;
