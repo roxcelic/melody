@@ -35,6 +35,8 @@ const myLogger = async function (req, res, next) {
 
     let trustedIps = process.env.TRUSTED_IPS.split(",");
 
+    console.log(splitIP);
+
     if (splitIP[0] == 100 || splitIP[0] == 127  || trustedIps.includes(clientIP)){
         data.succefull = true;
         next();
