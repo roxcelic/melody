@@ -29,7 +29,8 @@ const rateIp = async function (req, res, next) {
     let splitIP = clientIP.split(".");
 
     // ip check, again id never re-use code
-    if (splitIP[0] == 100 || splitIP[0] == 127  || await trustedIps.includes(clientIP)){
+    let ips = await trustedIps();
+    if (splitIP[0] == 100 || splitIP[0] == 127  || ips.includes(clientIP)){
         return next();
     } else {
         return limiter(req, res, next);
@@ -53,7 +54,8 @@ const myLogger = async function (req, res, next) {
 
     let splitIP = clientIP.split(".");
 
-    if (splitIP[0] == 100 || splitIP[0] == 127  || await trustedIps.includes(clientIP)){
+    let ips = await trustedIps();
+    if (splitIP[0] == 100 || splitIP[0] == 127  || ips.includes(clientIP)){
         data.succefull = true;
         next();
     } else {
@@ -104,7 +106,8 @@ const IsAdmin = async function (req, res) {
     let splitIP = clientIP.split(".");
 
     // ip check, again id never re-use code squared
-    return (splitIP[0] == 100 || splitIP[0] == 127  || await trustedIps.includes(clientIP))
+    let ips = await trustedIps();
+    return (splitIP[0] == 100 || splitIP[0] == 127  || ips.includes(clientIP))
 }
 
 const IsTrueAdmin = async function (req, res) {
