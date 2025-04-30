@@ -9,23 +9,28 @@ router.post('/chat/post', async (req, res) => {
     if (req.body.chatName) {
         let folder = await utils.makefolder(`chat`);
 
-        if (fs.existsSync(`${folder}/${req.body.chcatName}`) || utils.IsAdmin(req, res)){
-            let chat = await utils.readDataFile(`chat/${req.body.chatName}`);
+        if (fs.existsSync(`${folder}/${req.body.chatName}`) || utils.IsAdmin(req, res)){
 
-            chat = chat == "empty" ? [] : chat;
-    
-            chat.push([
-                text.upload || "", 
-                text.color || "#fff", 
-                await utils.newChatId(`chat/${req.body.chatName}`), 
-                text.name || "", 
-                new Date()
-            ]);
+            if (req.body.chatName == "admin" && !utils.IsAdmin(req, res)){
+                res.json({"status": "evil do-er"});
+            } else {
+                let chat = await utils.readDataFile(`chat/${req.body.chatName}`);
+
+                chat = chat == "empty" ? [] : chat;
         
-            while (chat.length > 99) chat.shift();
-            utils.writeDataFile(`chat/${req.body.chatName}`, chat);
-        
-            res.json({"status": "succesfull"});
+                chat.push([
+                    text.upload || "", 
+                    text.color || "#fff", 
+                    await utils.newChatId(`chat/${req.body.chatName}`), 
+                    text.name || "", 
+                    new Date()
+                ]);
+            
+                while (chat.length > 99) chat.shift();
+                utils.writeDataFile(`chat/${req.body.chatName}`, chat);
+            
+                res.json({"status": "succesfull"});
+            }
         } else {
             res.json({"status": "evil do-er"});
         }

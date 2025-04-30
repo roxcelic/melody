@@ -17,6 +17,25 @@ const limiter = rateLimit({
     message: "why"
 });
 
+let trustedIps = async function () {
+    return await readDataFile("trustedIps");
+}
+
+const rateIp = async function (req, res, next) {
+    // ip grabber, i would never re-use code
+    let clientIP = req.headers["x-forwarded-for"] || req.ip;
+    clientIP = clientIP.startsWith("::ffff:") ? clientIP.substring(7) : clientIP;
+
+    let splitIP = clientIP.split(".");
+
+    // ip check, again id never re-use code
+    if (splitIP[0] == 100 || splitIP[0] == 127  || await trustedIps.includes(clientIP)){
+        return next();
+    } else {
+        return limiter(req, res, next);
+    }
+}
+
 const myLogger = async function (req, res, next) {
     let currentData = await readDataFile("data") || {ips: []};
 
@@ -28,14 +47,13 @@ const myLogger = async function (req, res, next) {
         ip: clientIP,
         time: new Date(),
         path: req.originalUrl,
-        succefull: false
+        succefull: false,
+        access: "normal"
     }
 
     let splitIP = clientIP.split(".");
 
-    let trustedIps = process.env.TRUSTED_IPS.split(",");
-
-    if (splitIP[0] == 100 || splitIP[0] == 127  || trustedIps.includes(clientIP)){
+    if (splitIP[0] == 100 || splitIP[0] == 127  || await trustedIps.includes(clientIP)){
         data.succefull = true;
         next();
     } else {
@@ -48,21 +66,34 @@ const myLogger = async function (req, res, next) {
     writeDataFile("data",currentData);
 }
 
-const rateIp = async function (req, res, next) {
-    // ip grabber, i would never re-use code
+const TrueLogger = async function (req, res, next) {
+    let currentData = await readDataFile("data") || {ips: []};
+
+    // ip grabber
     let clientIP = req.headers["x-forwarded-for"] || req.ip;
     clientIP = clientIP.startsWith("::ffff:") ? clientIP.substring(7) : clientIP;
 
+    data = {
+        ip: clientIP,
+        time: new Date(),
+        path: req.originalUrl,
+        succefull: false,
+        access: "true"
+    }
+
     let splitIP = clientIP.split(".");
 
-    let trustedIps = process.env.TRUSTED_IPS.split(",");
-
-    // ip check, again id never re-use code
-    if (splitIP[0] == 100 || splitIP[0] == 127  || trustedIps.includes(clientIP)){
-        return next();
+    if (splitIP[0] == 100 || splitIP[0] == 127){
+        data.succefull = true;
+        next();
     } else {
-        return limiter(req, res, next);
+        res.json({
+            error: "you aint allowed to see this"
+        });
     }
+
+    currentData.ips.push(data);
+    writeDataFile("data",currentData);
 }
 
 const IsAdmin = async function (req, res) {
@@ -72,10 +103,19 @@ const IsAdmin = async function (req, res) {
 
     let splitIP = clientIP.split(".");
 
-    let trustedIps = process.env.TRUSTED_IPS.split(",");
-
-    // ip check, again id never re-use code
-    return (splitIP[0] == 100 || splitIP[0] == 127  || trustedIps.includes(clientIP))
+    // ip check, again id never re-use code squared
+    return (splitIP[0] == 100 || splitIP[0] == 127  || await trustedIps.includes(clientIP))
 }
 
-module.exports = {myLogger, rateIp, IsAdmin}
+const IsTrueAdmin = async function (req, res) {
+    // ip grabber, i would never re-use code cubed
+    let clientIP = req.headers["x-forwarded-for"] || req.ip;
+    clientIP = clientIP.startsWith("::ffff:") ? clientIP.substring(7) : clientIP;
+
+    let splitIP = clientIP.split(".");
+
+    // ip check, again id never re-use code cubed
+    return (splitIP[0] == 100 || splitIP[0] == 127)
+}
+
+module.exports = {rateIp, myLogger, TrueLogger, IsAdmin, IsTrueAdmin}
