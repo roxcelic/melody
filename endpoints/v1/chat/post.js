@@ -37,7 +37,7 @@ router.post('/chat/post', async (req, res) => {
         chat.push([
             text.upload || "", 
             text.color || "#fff", 
-            await utils.newChatId(`chat/${req.body.chatName}`), 
+            await utils.newChatId(), 
             text.name || "", 
             new Date()
         ]);
