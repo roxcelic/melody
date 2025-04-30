@@ -26,7 +26,7 @@ router.post('/chat/post', async (req, res) => {
                     new Date()
                 ]);
             
-                while (chat.length > 99) chat.shift();
+                while (chat.length > process.env.CHAT_LENGTH) chat.shift();
                 utils.writeDataFile(`chat/${req.body.chatName}`, chat);
             
                 res.json({"status": "succesfull"});
@@ -44,7 +44,7 @@ router.post('/chat/post', async (req, res) => {
                 new Date()
             ]);
         
-            while (chat.length > 99) chat.shift();
+            while (chat.length > process.env.CHAT_LENGTH) chat.shift();
             utils.writeDataFile("chat", chat);
         
             res.json({"status": "succesfull"});
@@ -62,7 +62,7 @@ router.post('/chat/post', async (req, res) => {
             new Date()
         ]);
     
-        while (chat.length > 99) chat.shift();
+        while (chat.length > process.env.CHAT_LENGTH) chat.shift();
         utils.writeDataFile("chat", chat);
     
         res.json({"status": "succesfull"});
