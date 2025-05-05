@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const {makefolder} = require('./test');
+
 // to write to a file
 async function writeDataFile(name, content, extention = ".json", format = true){
     let dataFilePath = path.join(__dirname, `../../data/${name}${extention}`); 
@@ -48,17 +50,19 @@ async function deleteDataFile(name, extention = ".json") {
 
 // get file path
 async function getPaths(method = 0) {
-    let dataFilePath;
-
     if (method == 0) dataFilePath = path.join(__dirname, `../../data/uploads/`); 
     else if (method == 1) dataFilePath = path.join(__dirname, `../../data/blog/`);
+    else if (method == 2) dataFilePath = path.join(__dirname, `../../data/chat/`);
+    else dataFilePath = path.join(__dirname, `../../data/uploads/`);
 
     try {
         let filepaths = [];
-
-        fs.readdirSync(dataFilePath).forEach(file => {
-            filepaths.push(file);
-        });
+        
+        if (fs.existsSync(dataFilePath)){
+            fs.readdirSync(dataFilePath).forEach(file => {
+                filepaths.push(file);
+            });
+        }
     
         return filepaths;
     } catch (e) {

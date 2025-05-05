@@ -5,12 +5,28 @@ const fs = require('fs');
 
 router.post('/chat/post', async (req, res) => {
     let text = req.body;
-    
-    if (req.body.chatName) {
+    let filter = await utils.readDataFile('filter');
+    filter = filter != "empty" ? filter: [];
+
+    let can_continue = true;
+    let splitChat = text.upload.split(" ");
+
+    splitChat.forEach(word => {
+        if (filter.includes(word)){
+            can_continue = false;
+        }
+    });
+
+    if (text.upload == "" || text.name == ""){
+        can_continue = false;
+    }
+
+    if (!can_continue){
+        res.json({status: "used filtered word"});
+    } else if (req.body.chatName) {
         let folder = await utils.makefolder(`chat`);
 
-        if (fs.existsSync(`${folder}/${req.body.chatName}.json`) || await utils.IsAdmin(req, res)){
-
+        if (fs.existsSync(`${folder}/${req.body.chatName}.json`)){
             if (req.body.chatName == "admin" && !(await utils.IsAdmin(req, res))){
                 res.json({"status": "evil do-er"});
             } else {
@@ -65,7 +81,7 @@ router.post('/chat/post', async (req, res) => {
         while (chat.length > process.env.CHAT_LENGTH) chat.shift();
         utils.writeDataFile("chat", chat);
     
-        res.json({"status": "succesfull"});
+        res.json({status: "succesfull"});
     }
 });
 

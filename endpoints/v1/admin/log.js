@@ -7,7 +7,7 @@ router.get('/admin/viewlog', utils.myLogger, async (req, res) => {
     let data = await utils.readDataFile("data");
 
     res.json({
-        status: data.ips
+        status: data
     });
 });
 

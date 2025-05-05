@@ -39,6 +39,7 @@ const rateIp = async function (req, res, next) {
 
 const myLogger = async function (req, res, next) {
     let currentData = await readDataFile("data") || {ips: []};
+    currentData = currentData != "empty" ? currentData : [];
 
     // ip grabber
     let clientIP = req.headers["x-forwarded-for"] || req.ip;
@@ -64,7 +65,6 @@ const myLogger = async function (req, res, next) {
         });
     }
 
-    currentData.ips.push(data);
     writeDataFile("data",currentData);
 }
 
@@ -94,7 +94,7 @@ const TrueLogger = async function (req, res, next) {
         });
     }
 
-    currentData.ips.push(data);
+    currentData.push(data);
     writeDataFile("data",currentData);
 }
 
