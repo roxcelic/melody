@@ -10,8 +10,15 @@ router.post('/chat/post', async (req, res) => {
 
     let can_continue = true;
     let splitChat = text.upload.split(" ");
+    let splitName = text.name.split(" ");
 
     splitChat.forEach(word => {
+        if (filter.includes(word)){
+            can_continue = false;
+        }
+    });
+
+    splitName.forEach(word => {
         if (filter.includes(word)){
             can_continue = false;
         }
