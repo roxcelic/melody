@@ -8,7 +8,7 @@ router.post('/chat/post', async (req, res) => {
     let filter = await utils.readDataFile('filter');
     filter = filter != "empty" ? filter: [];
 
-    if (!await utils.CheckPost(text) && ! await utils.IsAdmin()){
+    if (!await utils.CheckPost(text) && ! await utils.IsAdmin(req, res)){
         res.json({status: "used filtered word"});
     } else if (req.body.chatName) {
         let folder = await utils.makefolder(`chat`);
