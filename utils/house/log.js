@@ -38,7 +38,7 @@ const rateIp = async function (req, res, next) {
 }
 
 const myLogger = async function (req, res, next) {
-    let currentData = await readDataFile("data") || {ips: []};
+    let currentData = await readDataFile("data") || [];
     currentData = currentData != "empty" ? currentData : [];
 
     // ip grabber
@@ -56,6 +56,7 @@ const myLogger = async function (req, res, next) {
     let splitIP = clientIP.split(".");
 
     let ips = await trustedIps();
+
     if (splitIP[0] == 100 || splitIP[0] == 127  || ips.includes(clientIP)){
         data.succefull = true;
         next();
@@ -65,11 +66,12 @@ const myLogger = async function (req, res, next) {
         });
     }
 
+    currentData.push(data);
     writeDataFile("data",currentData);
 }
 
 const TrueLogger = async function (req, res, next) {
-    let currentData = await readDataFile("data") || {ips: []};
+    let currentData = await readDataFile("data") || [];
 
     // ip grabber
     let clientIP = req.headers["x-forwarded-for"] || req.ip;
