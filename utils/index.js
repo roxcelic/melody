@@ -9,6 +9,7 @@ const { getUserInfo } = require(`${dataPath}discord`);
 const { getCurrentlyPlaying, parseSpotifyData } = require(`${dataPath}spotify`);
 const { myLogger, TrueLogger, rateIp, IsAdmin, IsTrueAdmin } = require(`${dataPath}log`);
 const { newChatId } = require(`${dataPath}chat`);
+const { CheckPost } = require(`${dataPath}post`);
 
 // export functions
 module.exports = {
@@ -18,5 +19,6 @@ module.exports = {
     getUserInfo,
     getCurrentlyPlaying, parseSpotifyData,
     myLogger, TrueLogger, rateIp, IsAdmin, IsTrueAdmin,
-    newChatId
+    newChatId,
+    CheckPost
 }

@@ -8,27 +8,7 @@ router.post('/chat/post', async (req, res) => {
     let filter = await utils.readDataFile('filter');
     filter = filter != "empty" ? filter: [];
 
-    let can_continue = true;
-    let splitChat = text.upload.split(" ");
-    let splitName = text.name.split(" ");
-
-    splitChat.forEach(word => {
-        if (filter.includes(word)){
-            can_continue = false;
-        }
-    });
-
-    splitName.forEach(word => {
-        if (filter.includes(word)){
-            can_continue = false;
-        }
-    });
-
-    if (text.upload == "" || text.name == ""){
-        can_continue = false;
-    }
-
-    if (!can_continue){
+    if (!await utils.CheckPost(text) && ! await utils.IsAdmin()){
         res.json({status: "used filtered word"});
     } else if (req.body.chatName) {
         let folder = await utils.makefolder(`chat`);
