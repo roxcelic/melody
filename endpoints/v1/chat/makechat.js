@@ -15,7 +15,7 @@ router.get('/chat/makechat', utils.myLogger, async (req, res) => {
     
         res.json({status: "succesfull"});
     } catch (e) {
-        res.json({status: "un-succesfull"});
+        res.status(500).send('Internal Server Error');
     }
 });
 

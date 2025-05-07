@@ -20,33 +20,41 @@ const upload = multer({ storage });
 
 // change status
 router.post('/admin/changeStatus', utils.myLogger, async (req, res) => {
-    let status = "succesfull";
-
     try {
-        let {text} = req.body;
-        let currentData = await utils.readDataFile("status");
-        if (currentData == "empty") currentData = {};
+        let status = "succesfull";
+
+        try {
+            let {text} = req.body;
+            let currentData = await utils.readDataFile("status");
+            if (currentData == "empty") currentData = {};
+        
+            currentData.status = text.message;
+            currentData.image = text.image;
     
-        currentData.status = text.message;
-        currentData.image = text.image;
-
-        utils.writeDataFile("status", currentData);
+            utils.writeDataFile("status", currentData);
+        } catch (e) {
+            status = "failed";
+        }
+    
+        res.json({
+            status
+        });
     } catch (e) {
-        status = "failed";
+        res.status(500).send('Internal Server Error');
     }
-
-    res.json({
-        status
-    });
 });
 
 // upload status image
 router.post('/admin/upload', utils.myLogger, upload.single('image'), async (req, res) => {
-    let status = "succesfull";
+    try {
+        let status = "succesfull";
 
-    res.json({
-        status
-    });
+        res.json({
+            status
+        });
+    } catch (e) {
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 module.exports = router;

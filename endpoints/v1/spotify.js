@@ -5,24 +5,28 @@ const router = express.Router();
 let myCache = require('../../cache');
 
 router.get('/spotify', async (req, res) => {
-    let mainData;
+    try {
+        let mainData;
 
-    if (myCache.get( "spotify" )){
-        mainData = myCache.get( "spotify" );
-
-        let currentTime = (new Date()).getTime();
-
-        mainData.time.progress_ms = mainData.time.progress_ms + (currentTime - mainData.time.timeStamp);
-        mainData.time.timeStamp = currentTime;
-    } else {
-        let spotifyData = await utils.getCurrentlyPlaying();
-
-        mainData = await utils.parseSpotifyData(spotifyData);
+        if (myCache.get( "spotify" )){
+            mainData = myCache.get( "spotify" );
     
-        myCache.set( "spotify", mainData, 15);
+            let currentTime = (new Date()).getTime();
+    
+            mainData.time.progress_ms = mainData.time.progress_ms + (currentTime - mainData.time.timeStamp);
+            mainData.time.timeStamp = currentTime;
+        } else {
+            let spotifyData = await utils.getCurrentlyPlaying();
+    
+            mainData = await utils.parseSpotifyData(spotifyData);
+        
+            myCache.set( "spotify", mainData, 15);
+        }
+    
+        res.json(mainData);
+    } catch (e) {
+        res.status(500).send('Internal Server Error');
     }
-
-    res.json(mainData);
 });
 
 

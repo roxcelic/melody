@@ -3,9 +3,13 @@ const utils = require('../../../utils');
 const router = express.Router();
 
 router.get('/admin/', utils.myLogger, async (req, res) => {
-    res.json({
-        status: "admin"
-    });
+    try {
+        res.json({
+            status: "admin"
+        });
+    } catch (e) {
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 module.exports = router;

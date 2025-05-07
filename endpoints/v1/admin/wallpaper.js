@@ -18,26 +18,31 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.get('/wallpaper', (req, res) => {
-
-    const imagePath = `${utils.getDataPath()}wallpaper`;
-    if (fs.existsSync(imagePath)){
-        res.setHeader('Content-Type', 'image/png');
-        res.sendFile(imagePath);
-    } else {
-        res.send(null);
+    try {
+        const imagePath = `${utils.getDataPath()}wallpaper`;
+        if (fs.existsSync(imagePath)){
+            res.setHeader('Content-Type', 'image/png');
+            res.sendFile(imagePath);
+        } else {
+            res.send(null);
+        }
+    } catch (e) {
+        res.status(500).send('Internal Server Error');
     }
-
 });
   
 
 // upload status image
 router.post('/admin/wallpaper/upload', utils.myLogger, upload.single('image'), async (req, res) => {
+    try {
+        let status = "succesfull";
 
-    let status = "succesfull";
-
-    res.json({
-        status
-    });
+        res.json({
+            status
+        });
+    } catch (e) {
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 module.exports = router;

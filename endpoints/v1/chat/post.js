@@ -4,39 +4,58 @@ const router = express.Router();
 const fs = require('fs');
 
 router.post('/chat/post', async (req, res) => {
-    let text = req.body;
-    let filter = await utils.readDataFile('filter');
-    filter = filter != "empty" ? filter: [];
-
-    if (!await utils.CheckPost(text) && ! await utils.IsAdmin(req, res)){
-        res.json({status: "used filtered word"});
-    } else if (req.body.chatName) {
-        let folder = await utils.makefolder(`chat`);
-
-        if (fs.existsSync(`${folder}/${req.body.chatName}.json`)){
-            if (req.body.chatName == "admin" && !(await utils.IsAdmin(req, res))){
-                res.json({"status": "evil do-er"});
+    try {
+        let text = req.body;
+        let filter = await utils.readDataFile('filter');
+        filter = filter != "empty" ? filter: [];
+    
+        if (!await utils.CheckPost(text) && ! await utils.IsAdmin(req, res)){
+            res.json({status: "used filtered word"});
+        } else if (req.body.chatName) {
+            let folder = await utils.makefolder(`chat`);
+    
+            if (fs.existsSync(`${folder}/${req.body.chatName}.json`)){
+                if (req.body.chatName == "admin" && !(await utils.IsAdmin(req, res))){
+                    res.json({"status": "evil do-er"});
+                } else {
+                    let chat = await utils.readDataFile(`chat/${req.body.chatName}`);
+    
+                    chat = chat == "empty" ? [] : chat;
+            
+                    chat.push([
+                        text.upload || "", 
+                        text.color || "#fff", 
+                        await utils.newChatId(`chat/${req.body.chatName}`), 
+                        text.name || "", 
+                        new Date()
+                    ]);
+                
+                    while (chat.length > process.env.CHAT_LENGTH) chat.shift();
+                    utils.writeDataFile(`chat/${req.body.chatName}`, chat);
+                
+                    res.json({"status": "succesfull"});
+                }
             } else {
-                let chat = await utils.readDataFile(`chat/${req.body.chatName}`);
-
+                let chat = await utils.readDataFile("chat");
+    
                 chat = chat == "empty" ? [] : chat;
-        
+            
                 chat.push([
                     text.upload || "", 
                     text.color || "#fff", 
-                    await utils.newChatId(`chat/${req.body.chatName}`), 
+                    await utils.newChatId(), 
                     text.name || "", 
                     new Date()
                 ]);
             
                 while (chat.length > process.env.CHAT_LENGTH) chat.shift();
-                utils.writeDataFile(`chat/${req.body.chatName}`, chat);
+                utils.writeDataFile("chat", chat);
             
                 res.json({"status": "succesfull"});
             }
         } else {
             let chat = await utils.readDataFile("chat");
-
+    
             chat = chat == "empty" ? [] : chat;
         
             chat.push([
@@ -50,25 +69,10 @@ router.post('/chat/post', async (req, res) => {
             while (chat.length > process.env.CHAT_LENGTH) chat.shift();
             utils.writeDataFile("chat", chat);
         
-            res.json({"status": "succesfull"});
+            res.json({status: "succesfull"});
         }
-    } else {
-        let chat = await utils.readDataFile("chat");
-
-        chat = chat == "empty" ? [] : chat;
-    
-        chat.push([
-            text.upload || "", 
-            text.color || "#fff", 
-            await utils.newChatId(), 
-            text.name || "", 
-            new Date()
-        ]);
-    
-        while (chat.length > process.env.CHAT_LENGTH) chat.shift();
-        utils.writeDataFile("chat", chat);
-    
-        res.json({status: "succesfull"});
+    } catch (e) {
+        res.status(500).send('Internal Server Error');
     }
 });
 

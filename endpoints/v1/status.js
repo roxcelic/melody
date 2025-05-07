@@ -3,9 +3,13 @@ const utils = require('../../utils');
 const router = express.Router();
 
 router.get('/status', async (req, res) => {
-    let currentData = await utils.readDataFile("status") || {};
+    try {
+        let currentData = await utils.readDataFile("status") || {};
 
-    res.json(currentData);
+        res.json(currentData);
+    } catch (e) {
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 module.exports = router;

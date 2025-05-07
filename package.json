@@ -17,6 +17,7 @@
     "express-rate-limit": "^7.5.0",
     "marked": "^15.0.7",
     "multer": "^1.4.5-lts.1",
-    "node-cache": "^5.1.2"
+    "node-cache": "^5.1.2",
+    "valid-filename": "^4.0.0"
   }
 }

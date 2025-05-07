@@ -5,20 +5,24 @@ const router = express.Router();
 let myCache = require('../../cache');
 
 router.get('/github', async (req, res) => {
-    let userInfo = myCache.get( "github" );
+    try {
+        let userInfo = myCache.get( "github" );
 
-    if (userInfo == undefined){
-        try {
-            userInfo = await fetch(`https://api.github.com/users/roxcelic`);
-            userInfo = await userInfo.json();
-        } catch (e){
-            userInfo = "error";
+        if (userInfo == undefined){
+            try {
+                userInfo = await fetch(`https://api.github.com/users/roxcelic`);
+                userInfo = await userInfo.json();
+            } catch (e){
+                userInfo = "error";
+            }
+        
+            myCache.set( "github", userInfo, 60 );
         }
     
-        myCache.set( "github", userInfo, 60 );
+        res.json(userInfo);
+    } catch (e) {
+        res.status(500).send('Internal Server Error');
     }
-
-    res.json(userInfo);
 })
 
 module.exports = router;
