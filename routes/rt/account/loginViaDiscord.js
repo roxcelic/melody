@@ -15,10 +15,6 @@ router.get('/account/login/callback', async (req, res) => {
     try {
         let code = req.query.code;
 
-        console.log(`process.env.DISCORD_CLIENT_ID: ${process.env.DISCORD_CLIENT_ID}`);
-        console.log(`process.env.DISCORD_CLIENT_SECRET: ${process.env.DISCORD_CLIENT_SECRET}`);
-        console.log(`process.env.DISCORD_CLIENT_CALLBACK: ${process.env.DISCORD_CLIENT_CALLBACK}`);
-        
         const tokenResponseData = await request('https://discord.com/api/oauth2/token', {
             method: 'POST',
             body: new URLSearchParams({
@@ -36,22 +32,18 @@ router.get('/account/login/callback', async (req, res) => {
 
         const oauthData = await tokenResponseData.body.json();
 
-        console.log(oauthData);
-        
         const userResult = await request('https://discord.com/api/users/@me', {
             headers: {
                 authorization: `${oauthData.token_type} ${oauthData.access_token}`,
             },
         });
 
-        console.log(userResult);
-
         if (userResult.statusCode != 401) {
             let data = await userResult.body.json();
             await logIn(req, res, data.id, data.global_name, `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`);
             res.redirect(process.env.SUCCESFULL_REDIRECT || "https://roxcelic.love/profile");
         } else {
-            res.json({"status": "failed", "message": JSON.stringify(await userResult.body.json()), "oauth": oauthData});
+            res.json({"status": "failed"});
         }
 
     } catch (e) {
