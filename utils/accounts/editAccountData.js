@@ -15,6 +15,8 @@ export async function editAccountData(id, accountSubjects) {
         if (!Array.isArray(item) || item.length != 2) return new Error("each item must be an array in the format [key, data]");
         if (typeof item[0] !== 'string' || typeof item[1] !== 'string') return new Error("both inputs must be a string");    
 
+        console.log(config);
+
         switch (item[0]) {
             case "username":
                 if (item[1].length > config.profile.maxUsernameLength) return new Error(`username is too long, the max amount of characters is: ${config.profile.profile.maxUsernameLength}`);
