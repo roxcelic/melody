@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+</head>
+<body>
+    <h1>universal tests</h1>
+    <!--universal get-->
+    <form id="universal/get" onsubmit="return false">
+        <fieldset>
+          <legend>universal/get/</legend>
+          <label for="endpoint">endpoint:</label>
+          <input type="text" id="universal/get/endpoint" name="endpoint"><br><br>
+          <input type="submit" id="universal/get/submit" value="Submit"><br><br>
+          <label>result: </label>
+          <code id="universal/get/result">
+            none
+          </code>
+        </fieldset>
+    </form>
+
+    <!--universal post-->
+    <form id="universal/post" onsubmit="return false">
+        <fieldset>
+          <legend>universal/post/</legend>
+          <label for="endpoint">endpoint:</label>
+          <input type="text" id="universal/post/endpoint" name="endpoint"><br><br>
+          <label for="data">Data:</label>
+          <textarea type="text" id="universal/post/text" name="text"></textarea><br><br>
+          <input type="submit" id="universal/post/submit" value="Submit"><br><br>
+          <label>result: </label>
+          <code id="universal/post/result">
+            none
+          </code>
+        </fieldset>
+    </form>
+
+    <h1>endpoints</h1>
+    <h2>post</h2>
+
+    <!--account creation-->
+    <form id="api/accounts/loginWithBsky" onsubmit="return false">
+        <fieldset>
+          <legend>api/accounts/loginWithBsky</legend>
+
+          <label for="name">Name:</label>
+          <input type="name" id="api/accounts/loginWithBsky/name" name="name"><br><br>
+
+          <label for="password">Password:</label>
+          <input type="password" id="api/accounts/loginWithBsky/password" name="text"><br><br>
+
+          <input type="submit" id="api/accounts/loginWithBsky/submit" value="Submit"><br><br>
+
+          <label>result: </label>
+          <code id="api/accounts/loginWithBsky/result">
+            none
+          </code>
+        </fieldset>
+    </form>
+
+    <!--profile picture upload-->
+    <form method="POST" action="/api/account/uploadProfilePicture" enctype="multipart/form-data" id="api/accounts/uploadProfilePicture" onsubmit="return false">
+        <fieldset>
+            <legend>api/account/uploadProfilePicture</legend>
+    
+            <label>Upload profile picture</label>
+            <input type="file" name="profile-file" id="api/accounts/uploadProfilePicture/picture" required/><br><br>
+    
+            <input type="submit" value="Upload" id="api/accounts/uploadProfilePicture/Submit" /><br><br>
+
+            <label>result: </label>
+            <code id="api/accounts/uploadProfilePicture/result">
+              none
+            </code>
+        </fieldset>
+    </form>
+
+    <script>
+        // variables
+        let apiRoot = `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':3000' : ''}/`;
+
+        let data = {
+            api: {
+                accounts: {
+                    loginWithBsky: {
+                        form: document.getElementById("api/accounts/loginWithBsky"),
+                        password: document.getElementById("api/accounts/loginWithBsky/password"),
+                        name: document.getElementById("api/accounts/loginWithBsky/name"),
+                        submit: document.getElementById("api/accounts/loginWithBsky/submit"),
+                        result: document.getElementById("api/accounts/loginWithBsky/result")
+                    },
+                    uploadProfilePicture: {
+                        form: document.getElementById("api/accounts/uploadProfilePicture"),
+                        picture: document.getElementById("api/accounts/uploadProfilePicture/picture"),
+                        submit: document.getElementById("api/accounts/uploadProfilePicture/Submit"),
+                        result: document.getElementById("api/accounts/uploadProfilePicture/result")
+                    }
+                }
+            },
+            universal: {
+                get: {
+                    form: document.getElementById("universal/get"),
+                    endpoint: document.getElementById("universal/get/endpoint"),
+                    submit: document.getElementById("universal/get/submit"),
+                    result: document.getElementById("universal/get/result")
+                },
+                post: {
+                    form: document.getElementById("universal/post/"),
+                    endpoint: document.getElementById("universal/post/endpoint"),
+                    text: document.getElementById("universal/post/text"),
+                    submit: document.getElementById("universal/post/submit"),
+                    result: document.getElementById("universal/post/result")
+                }
+            }
+        }
+
+        // functions
+        let sendData = async (route, inputData, host = null) => {
+            console.log(inputData);
+            
+            try {
+                let response = await fetch(route, {
+                    method: "POST",
+                    body: JSON.stringify(inputData),
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    }
+                });
+
+                let responseJson = await response.json();
+
+                if (host != null) host.innerText = JSON.stringify(responseJson);
+
+                return responseJson;
+            } catch (e) {
+                console.log(e);
+                
+                if (host != null) host.innerText = JSON.stringify(e.message);
+                return e.message;
+            }
+        };
+
+        let getData = async (route, host = null) => {
+            try {
+                let response = await fetch(route, {
+                    method: "GET",
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8"
+                    }
+                });
+
+                let responseJson = await response.json();
+
+                if (host != null) host.innerText = JSON.stringify(responseJson);
+
+                return responseJson;
+            } catch (e) {
+                console.log(e);
+
+                if (host != null) host.innerText = JSON.stringify(e.message);
+                return e.message;
+            }
+        };
+
+        async function submit(e) {
+            e.preventDefault();
+
+            
+            let formData = new FormData(data.api.accounts.uploadProfilePicture.form);
+        
+            console.log("uploading...");
+
+            try {
+                let response = await fetch(`${apiRoot}api/account/uploadProfilePicture`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                
+                console.log("uploaded");
+                
+                if (!response.ok) {
+                    throw new Error('Upload failed');
+                }
+                
+                let uploadData = await response.json();
+
+                data.api.accounts.uploadProfilePicture.result.style.color = "white";
+                data.api.accounts.uploadProfilePicture.result.innerText = uploadData.status;
+
+                window.location.href = window.location.href;
+            } catch (e) {
+                data.api.accounts.uploadProfilePicture.result.style.color = "red";
+                data.api.accounts.uploadProfilePicture.result.innerText = e;
+            }
+        }
+
+        // body
+        // login with bluesky
+            data.api.accounts.loginWithBsky.submit.addEventListener("click", async () => {
+                let profileData = await sendData("/api/account/loginWithBluesky", {
+                    username: data.api.accounts.loginWithBsky.name.value,
+                    password: data.api.accounts.loginWithBsky.password.value
+                }, data.api.accounts.loginWithBsky.result);
+            });
+
+        // universal get
+            data.universal.get.submit.addEventListener("click", async () => {
+                await getData(data.universal.get.endpoint.value, data.universal.get.result);
+            });
+        
+        // universal post
+        data.universal.post.submit.addEventListener("click", async () => {
+            await sendData(data.universal.post.endpoint.value, {
+                inputData: data.universal.post.text.value
+            }, data.universal.post.result);
+        });
+
+        // profile picture
+        data.api.accounts.uploadProfilePicture.form.addEventListener('submit', submit);
+    </script>
+</body>
+</html>
