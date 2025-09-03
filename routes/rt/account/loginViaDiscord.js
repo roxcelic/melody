@@ -31,6 +31,8 @@ router.get('/account/login/callback', async (req, res) => {
         });
 
         const oauthData = await tokenResponseData.body.json();
+
+        console.log(oauthData);
         
         const userResult = await request('https://discord.com/api/users/@me', {
             headers: {
@@ -38,11 +40,15 @@ router.get('/account/login/callback', async (req, res) => {
             },
         });
 
+        console.log(userResult);
+
         if (userResult.statusCode != 401) {
             let data = await userResult.body.json();
             await logIn(req, res, data.id, data.global_name, `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`);
             res.redirect(process.env.SUCCESFULL_REDIRECT || "https://roxcelic.love/profile");
         } else {
+            console.log(JSON.stringify(await userResult.body.json()));
+
             res.json({"status": "failed"});
         }
 
