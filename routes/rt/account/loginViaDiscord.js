@@ -47,9 +47,7 @@ router.get('/account/login/callback', async (req, res) => {
             await logIn(req, res, data.id, data.global_name, `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`);
             res.redirect(process.env.SUCCESFULL_REDIRECT || "https://roxcelic.love/profile");
         } else {
-            console.log(JSON.stringify(await userResult.body.json()));
-
-            res.json({"status": "failed"});
+            res.json({"status": "failed", "message": JSON.stringify(await userResult.body.json())});
         }
 
     } catch (e) {
