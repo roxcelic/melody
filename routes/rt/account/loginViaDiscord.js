@@ -14,6 +14,10 @@ router.get('/account/login', async (req, res) => {
 router.get('/account/login/callback', async (req, res) => {
     try {
         let code = req.query.code;
+
+        console.log(`process.env.DISCORD_CLIENT_ID: ${process.env.DISCORD_CLIENT_ID}`);
+        console.log(`process.env.DISCORD_CLIENT_SECRET: ${process.env.DISCORD_CLIENT_SECRET}`);
+        console.log(`process.env.DISCORD_CLIENT_CALLBACK: ${process.env.DISCORD_CLIENT_CALLBACK}`);
         
         const tokenResponseData = await request('https://discord.com/api/oauth2/token', {
             method: 'POST',
